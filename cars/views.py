@@ -1,11 +1,27 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
+from .serializers import CarSerializer
+from .models import Car
+
+
+@api_view(['GET', 'POST'])
+def cars_list(request):
+    if request.method == 'GET':
+        cars = Car.objects.all()
+        serializer = CarSerializer(cars, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = CarSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
-def cars_list(request):
-
-
-    return Response('ok')
-
+def car_detail(request, pk):
+    car = get_object_or_404(Car, pk=pk)
+    serializer = CarSerializer(car)
+    return Response(serializer.data)
 
 
