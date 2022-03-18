@@ -20,8 +20,14 @@ def cars_list(request):
 
 @api_view(['GET'])
 def car_detail(request, pk):
-    car = get_object_or_404(Car, pk=pk)
-    serializer = CarSerializer(car)
-    return Response(serializer.data)
+    try: 
+        car = Car.objects.get(pk=pk)
+        serializer = CarSerializer(car);
+        return Response(serializer.data)
+    except Car.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND);
+    #car = get_object_or_404(Car, pk=pk)
+    #serializer = CarSerializer(car)
+    #return Response(serializer.data)
 
 
